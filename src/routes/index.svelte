@@ -4,6 +4,8 @@
 
 <script>
 	import Counter from '$lib/Counter.svelte';
+	import JordanPeterson from './/JordanPeterson.svelte';
+	import MusicAndVisions from './MusicAndVisions.svelte';
 </script>
 
 <svelte:head>
@@ -12,21 +14,24 @@
 
 <section>
 	<h1>
-		<div class="welcome">
-			<picture>
-				<source srcset="svelte-welcome.webp" type="image/webp" />
-				<img src="svelte-welcome.png" alt="Welcome" />
-			</picture>
-		</div>
-
-		to your new<br />SvelteKit app
+		Life Sanctuary
 	</h1>
 
-	<h2>
-		try editing <strong>src/routes/index.svelte</strong>
-	</h2>
+	<JordanPeterson/>
+	<MusicAndVisions/>
 
-	<Counter />
+	TODO: 
+		2. Memory drawings and history
+	  3. Fun places and things to do
+
+	<!-- <Counter /> -->
+	
+	<!-- <div class="welcome">
+		<picture>
+			<source srcset="svelte-welcome.webp" type="image/webp" />
+			<img src="svelte-welcome.png" alt="Welcome" />
+		</picture>
+	</div> -->
 </section>
 
 <style>

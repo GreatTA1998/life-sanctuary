@@ -3,11 +3,92 @@
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="/favicon.png" />
+		<link rel="stylesheet" href="https://unpkg.com/papercss@1.8.2/dist/paper.min.css">
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 		%svelte.head%
 	</head>
 	<body>
+		<button id="togglePlay">Toggle Play</button>
 		<div id="svelte">%svelte.body%</div>
 	</body>
+
+	<script src="https://sdk.scdn.co/spotify-player.js"></script>
+
+	<script>
+		// https://developer.spotify.com/documentation/web-playback-sdk/quick-start/#listening-through-the-sdk
+		// To play music, see here https://developer.spotify.com/documentation/web-api/
+
+		window.onSpotifyWebPlaybackSDKReady = () => {
+			const token = 'BQAJw_Xqjlnhsen37iu6ZIMkPFytXJI6VFu6s9XxjoS0blcu00QRmFp0mp-fKkqAl87gvzKZ-hyuo8z0DUg1vxudj3ilKo4EpWooEDF5VepEG3CrFlFQOV1-G_O1aTS6r_d7DINsiwY_dgrAqbEOZLNMGSVDKDT9B-ox';
+			const player = new Spotify.Player({
+				name: 'Web Playback SDK Quick Start Player',
+				getOAuthToken: cb => { cb(token); },
+				volume: 0.5
+			});
+			
+			// Ready
+			player.addListener('ready', ({ device_id }) => {
+				console.log('Ready with Device ID', device_id);
+			});
+
+			// Not Ready
+			player.addListener('not_ready', ({ device_id }) => {
+				console.log('Device ID has gone offline', device_id);
+			});
+
+			player.addListener('initialization_error', ({ message }) => { 
+      	console.error(message);
+			});
+
+			player.addListener('authentication_error', ({ message }) => {
+					console.error(message);
+			});
+
+			player.addListener('account_error', ({ message }) => {
+					console.error(message);
+			});
+
+			player.connect();
+
+			document.getElementById('togglePlay').onclick = function() {
+				console.log('player =', player)
+				player.togglePlay();
+			};
+		}
+
+		// way to play music programmatically, rather than just be 
+		// an additional device to play music from
+
+		// TODO: 
+		//   1. Get permanent access token
+		//   2. Setup web API access to playlists and songs (HARD) 
+		//   3. Use a nice UI component  
+		//   4. Refactor 
+
+		const play = ({
+			spotify_uri,
+			playerInstance: {
+				_options: {
+					getOAuthToken
+				}
+			}
+		}) => {
+			getOAuthToken(access_token => {
+				fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
+					method: 'PUT',
+					body: JSON.stringify({ uris: [spotify_uri] }),
+					headers: {
+						'Content-Type': 'application/json',
+						'Authorization': `Bearer ${access_token}`
+					},
+				});
+			});
+		};
+
+		play({
+			playerInstance: player, // new Spotify.Player({ name: "..." }),
+			spotify_uri: '5mOOwyOGev9frlXm5NDEQy?si=4d69ddbe5c204afa',
+		});
+	</script>
 </html>
